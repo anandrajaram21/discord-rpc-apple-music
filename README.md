@@ -18,7 +18,7 @@ Getting the artwork is the biggest problem, everything else is relatively straig
 
 Initially, I thought I would be able to solve my problems pretty easily, but as time progressed, I ended up taking a lot of ideas from the original repo (especially the one with fetching data from https://itunes.apple.com that was pure genius).
 
-In the end, my code ended up being a Javascript and Node.js version of NextFire's original code. It was still a really good learning experience.
+In the end, my code ended up being a Javascript and Node.js version of NextFire's original code. It was still a really good learning experience. I just got lazy to fork the repo again and make the changes. Even otherwise, I think this repo has a fairly different codebase to warrant a new repo in itself.
 
 I also removed the entire caching mechanism as it didn't seem to work well for me, and the wrong artwork would often showup on Discord.
 
