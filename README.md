@@ -24,7 +24,30 @@ I also removed the entire caching mechanism as it didn't seem to work well for m
 
 ## Installation
 
-Will be updated once I get it installed properly myself
+Prerequisites: Node.js, and NPM.
+
+To run the script, enter the following commands in a terminal window
+
+```bash
+npm install -g pm2 # Using pm2 so its easy to manage the script
+git clone https://github.com/anandrajaram21/discord-rpc-apple-music.git
+cd discord-rpc-apple-music
+npm install
+pm2 start index.js # If pm2 is not found, make sure that the globally installed npm packages are in your PATH
+```
+
+## Some QOL Features
+
+If you want to run this script on startup, pm2 will do that for you. Just run the command `pm2 startup` and follow the onscreen instructions.
+
+Stopping the program - `pm2 stop index`
+Removing the service from pm2 - `pm2 delete index`
+
+## Uninstall
+
+- Remove the RPC service from pm2 - `pm2 delete index`
+- Stop pm2 from running on startup with the command `pm2 unstartup`
+- Remove the directory where you cloned the GitHub repo.
 
 ## Credits
 
