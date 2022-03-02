@@ -1,6 +1,6 @@
 # Apple Music Discord RPC
 
-Discord RPC Client for Apple Music
+Discord RPC Client for Apple Music (macOS Big Sur and above). If you are using macOS, you'd be forced to use the default Apple Music app if you want to enjoy lossless audio. If you are using Windows/Linux, just use [Cider](https://cider.sh), they have an inbuilt Discord RPC implementation which uses Apple MusicKit to fetch information about the tracks (which is much more reliable than the method employed here to fetch data). Unfortunately, Cider doesn't support lossless audio (yet), so this is a handy alternative to get the Discord RPC working till then.
 
 ## Disclaimer
 
