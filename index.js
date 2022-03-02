@@ -1,6 +1,7 @@
 import RPC from "discord-rpc";
 import jxa from "@jxa/run";
 import axios from "axios";
+import "dotenv/config";
 
 const CLIENT_ID = "947831155376422923";
 const client = new RPC.Client({ transport: "ipc" });
@@ -17,20 +18,17 @@ const getState = async () => {
   });
 };
 
-const fetchSongUrl = async () => {
-  return "https://music.apple.com/in/album/legend/1440909016?i=1440909028";
-};
-
-const fetchArtwork = async (songUrl) => {
-  const params = new URLSearchParams();
-  params.append("url", songUrl);
-  return axios.post(
-    "https://clients.dodoapps.io/playlist-precis/playlist-artwork.php",
+const fetchArtwork = async (searchQuery) => {
+  const params = {
+    query: searchQuery,
+    type: "release",
+  };
+  return axios.get("https://api.discogs.com/database/search", {
+    headers: {
+      Authorization: `Discogs key=${process.env.DISCOGS_KEY}, secret=${process.env.DISCOGS_SECRET}`,
+    },
     params,
-    {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    }
-  );
+  });
 };
 
 const setActivity = async () => {
@@ -47,8 +45,9 @@ const setActivity = async () => {
             playerPosition: music.playerPosition(),
           };
         });
-        const songUrl = await fetchSongUrl();
-        const artwork = await fetchArtwork(songUrl);
+        const artwork = await fetchArtwork(
+          `${properties.artist} ${properties.name}`
+        );
         const delta = (properties.duration - properties.playerPosition) * 1000;
         const end = Math.ceil(Date.now() + delta);
 
@@ -56,7 +55,7 @@ const setActivity = async () => {
           details: properties.name,
           state: `${properties.artist} — ${properties.album}`,
           endTimestamp: end,
-          largeImageKey: artwork.data.thumb,
+          largeImageKey: artwork.data.results[0].cover_image,
         };
 
         client.setActivity(activity);
@@ -82,4 +81,4 @@ client.on("ready", () => {
   }, 10e3);
 });
 
-client.login({clientId: CLIENT_ID}).catch(console.error)
+client.login({ clientId: CLIENT_ID }).catch(console.error);
