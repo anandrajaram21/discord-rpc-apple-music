@@ -2,24 +2,8 @@ import RPC from "discord-rpc";
 import jxa from "@jxa/run";
 import axios from "axios";
 
-const main = async () => {
-  try {
-    const client = new RPC.Client({ transport: "ipc" });
-    const timer = setInterval(async () => {
-      try {
-        await setActivity(client);
-      } catch (err) {
-        console.error(err);
-        clearInterval(timer);
-        client.destroy();
-        main();
-      }
-    }, 15e3);
-  } catch (err) {
-    console.error(err);
-    setTimeout(main, 15e3);
-  }
-};
+const CLIENT_ID = "947831155376422923";
+const client = new RPC.Client({ transport: "ipc" });
 
 const isOpen = async () => {
   return jxa.run(() => {
@@ -49,7 +33,8 @@ const fetchArtwork = async (songUrl) => {
   );
 };
 
-const setActivity = async (client) => {
+const setActivity = async () => {
+  if (!client) return;
   const open = await isOpen();
   if (open) {
     const state = await getState();
@@ -74,9 +59,7 @@ const setActivity = async (client) => {
           largeImageKey: artwork.data.thumb,
         };
 
-        client.on("ready", async () => {
-          client.setActivity(activity);
-        });
+        client.setActivity(activity);
 
         break;
       }
@@ -86,10 +69,17 @@ const setActivity = async (client) => {
         break;
       }
     }
-    client.login({ clientId: "947831155376422923" });
   } else {
     await client.clearActivity();
   }
 };
 
-main();
+client.on("ready", () => {
+  console.log("Starting Apple Music RPC");
+  setActivity();
+  setInterval(() => {
+    setActivity();
+  }, 10e3);
+});
+
+client.login({clientId: CLIENT_ID}).catch(console.error)
