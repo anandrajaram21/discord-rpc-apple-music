@@ -46,7 +46,7 @@ const setActivity = async () => {
           };
         });
         const artwork = await fetchArtwork(
-          `${properties.artist} ${properties.name}`
+          `${properties.name} ${properties.artist.split(",")[0]}`
         );
         const delta = (properties.duration - properties.playerPosition) * 1000;
         const end = Math.ceil(Date.now() + delta);
@@ -55,7 +55,9 @@ const setActivity = async () => {
           details: properties.name,
           state: `${properties.artist} — ${properties.album}`,
           endTimestamp: end,
-          largeImageKey: artwork.data.results[0].cover_image,
+          largeImageKey: artwork.data.results[0]
+            ? artwork.data.results[0].cover_image
+            : "https://i.pinimg.com/originals/67/f6/cb/67f6cb14f862297e3c145014cdd6b635.jpg",
         };
 
         client.setActivity(activity);
