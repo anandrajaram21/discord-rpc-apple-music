@@ -1,7 +1,6 @@
 import RPC from "discord-rpc";
 import jxa from "@jxa/run";
 import axios from "axios";
-import "dotenv/config";
 
 const CLIENT_ID = "947831155376422923";
 const client = new RPC.Client({ transport: "ipc" });
@@ -57,11 +56,12 @@ const setActivity = async () => {
             : "https://i.pinimg.com/originals/67/f6/cb/67f6cb14f862297e3c145014cdd6b635.jpg",
           largeImageText: properties.name,
           buttons: [
-            artwork.data.results[0] ?
-            {
-              label: "Listen on Apple Music",
-              url: artwork.data.results[0].trackViewUrl,
-            } : {}
+            artwork.data.results[0]
+              ? {
+                  label: "Listen on Apple Music",
+                  url: artwork.data.results[0].trackViewUrl,
+                }
+              : {},
           ],
         };
 
