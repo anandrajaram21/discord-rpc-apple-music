@@ -40,7 +40,10 @@ pm2 start index.js # If pm2 is not found, make sure that the globally installed 
 
 If you want to run this script on startup, pm2 will do that for you. Just run the command `pm2 startup` and follow the onscreen instructions.
 
+After runnning `pm2 startup`, run the command `pm2 save` to save the list of current processes that are running (to be run on startup)
+
 Stopping the program - `pm2 stop index`
+
 Removing the service from pm2 - `pm2 delete index`
 
 ## Uninstall
