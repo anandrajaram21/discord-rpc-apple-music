@@ -20,13 +20,10 @@ const getState = async () => {
 
 const fetchArtwork = async (searchQuery) => {
   const params = {
-    query: searchQuery,
-    type: "release",
+    media: "music",
+    term: searchQuery,
   };
-  return axios.get("https://api.discogs.com/database/search", {
-    headers: {
-      Authorization: `Discogs key=${process.env.DISCOGS_KEY}, secret=${process.env.DISCOGS_SECRET}`,
-    },
+  return axios.get("https://itunes.apple.com/search", {
     params,
   });
 };
@@ -46,7 +43,7 @@ const setActivity = async () => {
           };
         });
         const artwork = await fetchArtwork(
-          `${properties.name} ${properties.artist.split(",")[0]}`
+          `${properties.name} ${properties.artist}`
         );
         const delta = (properties.duration - properties.playerPosition) * 1000;
         const end = Math.ceil(Date.now() + delta);
@@ -56,8 +53,16 @@ const setActivity = async () => {
           state: `${properties.artist} — ${properties.album}`,
           endTimestamp: end,
           largeImageKey: artwork.data.results[0]
-            ? artwork.data.results[0].cover_image
+            ? artwork.data.results[0].artworkUrl100
             : "https://i.pinimg.com/originals/67/f6/cb/67f6cb14f862297e3c145014cdd6b635.jpg",
+          largeImageText: properties.name,
+          buttons: [
+            artwork.data.results[0] ?
+            {
+              label: "Listen on Apple Music",
+              url: artwork.data.results[0].trackViewUrl,
+            } : {}
+          ],
         };
 
         client.setActivity(activity);
