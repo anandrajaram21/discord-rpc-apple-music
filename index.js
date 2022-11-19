@@ -1,6 +1,6 @@
 import RPC from "discord-rpc";
 import jxa from "@jxa/run";
-import axios from "axios";
+import albumArt from "album-art"
 
 const CLIENT_ID = "947831155376422923";
 const client = new RPC.Client({ transport: "ipc" });
@@ -17,15 +17,9 @@ const getState = async () => {
   });
 };
 
-const fetchArtwork = async (searchQuery) => {
-  const params = {
-    media: "music",
-    term: searchQuery,
-  };
-  return axios.get("https://itunes.apple.com/search", {
-    params,
-  });
-};
+
+
+await albumArt(`${properties.arist}`, ).then((data) => data)
 
 const setActivity = async () => {
   if (!client) return;
@@ -41,9 +35,10 @@ const setActivity = async () => {
             playerPosition: music.playerPosition(),
           };
         });
-        const artwork = await fetchArtwork(
-          `${properties.name} ${properties.artist}`
-        );
+        const options = {
+          album: encodeURI(`${properties.album}`)
+        }
+        const artwork = await albumArt(`${properties.arist}`, const options).then((data) => data)
         const delta = (properties.duration - properties.playerPosition) * 1000;
         const end = Math.ceil(Date.now() + delta);
 
