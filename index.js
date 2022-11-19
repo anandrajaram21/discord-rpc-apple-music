@@ -18,9 +18,6 @@ const getState = async () => {
 };
 
 
-
-await albumArt(`${properties.arist}`, ).then((data) => data)
-
 const setActivity = async () => {
   if (!client) return;
   const open = await isOpen();
@@ -38,26 +35,18 @@ const setActivity = async () => {
         const options = {
           album: encodeURI(`${properties.album}`)
         }
-        const artwork = await albumArt(`${properties.arist}`, const options).then((data) => data)
+        const artwork = await albumArt(`${properties.arist}`, options).then((data) => data);
         const delta = (properties.duration - properties.playerPosition) * 1000;
         const end = Math.ceil(Date.now() + delta);
-
+        console.log(`${properties.artist} - ${properties.album}`)
         const activity = {
           details: properties.name,
           state: `${properties.artist} — ${properties.album}`,
           endTimestamp: end,
-          largeImageKey: artwork.data.results[0]
-            ? artwork.data.results[0].artworkUrl100
+          largeImageKey: artwork
+            ? artwork
             : "https://i.pinimg.com/originals/67/f6/cb/67f6cb14f862297e3c145014cdd6b635.jpg",
           largeImageText: properties.name,
-          buttons: [
-            artwork.data.results[0]
-              ? {
-                  label: "Listen on Apple Music",
-                  url: artwork.data.results[0].trackViewUrl,
-                }
-              : {},
-          ],
         };
 
         client.setActivity(activity);
