@@ -1,9 +1,15 @@
-import osascript from "node-osascript"
+import yt from 'ytsr';
+import fs from 'fs';
 
 
 
 
-osascript.executeFile('./applescript/saveartwork.applescript',{artistname:'pogo', songname:'forget'},function(err,result,raw){
-    if(err) return console.error(err)
-        console.log(result, raw)
-    });
+
+const search = await yt("run away bonjovi", { limit: 1 })
+const config = JSON.stringify(search.items)
+const result = JSON.parse(config)
+
+console.log(result[0].url)
+
+
+AIzaSyDtaggzyWfXN44a03NbTU71tDCJD8L91Mk

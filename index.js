@@ -1,5 +1,6 @@
 import RPC from "discord-rpc";
 import jxa from "@jxa/run";
+import yt from 'ytsr';
 import fs from 'fs';
 import axios from "axios";
 import os from 'os';
@@ -12,9 +13,7 @@ const config = JSON.parse(fs.readFileSync('./config/config.json', 'utf-8'))
 const fetchAlbumArt = config.fetchAlbumArtOnline;
 const whereToFetchOnline = config.whereToFetchOnline;
 const enableArtworkSaving = config.enableArtworkSaving;
-if (config.changeButtonProvider === "youtube"){
-  var enableYoutubeButton = Boolean(true)
-}
+const enableYoutubeButton = config.changeButtonProvider;
 
 const CLIENT_ID = "1043683037105360947";
 const client = new RPC.Client({ transport: "ipc" });
@@ -56,10 +55,15 @@ const setActivity = async () => {
             playerPosition: music.playerPosition(),
           };
         });
-        const nameandartist = encodeURIComponent(`${properties.artist} ${properties.name}`)
+        const nameandartist = encodeURIComponent(`${properties.artist} ${properties.name}`);
         const options = {
           album: encodeURIComponent(`${properties.album.replace("(", "%20").replace(")", "%20")}`)
-        }
+        };
+        const search = await yt(`${properties.name} ${properties.artist}`, { limit: 1 })
+        const config = JSON.stringify(search.items)
+        const result = JSON.parse(config)
+        
+        
         if (fetchAlbumArt === 'true' ){
           if (whereToFetchOnline === 'spotify'){
             var artwork = await albumArt(`${encodeURIComponent(properties.arist)}`, options).then((data) => data);
@@ -67,16 +71,16 @@ const setActivity = async () => {
             var appleresponse = await fetchArtworkApple(
               `${properties.name} ${properties.artist}`
             );
-            var artwork = appleresponse.data.results[0].artworkUrl100
-          }
+            var artwork = appleresponse.data.results[0].artworkUrl100;
+          };
         } else if (fetchAlbumArt === 'false') {
           osascript.executeFile('./applescript/getartwork.applescript',function(err,result,raw){
             if(err) return console.error(err)
             });
-          var artwork = `${os.homedir()}/Documents/MusicRpcPhotos/cover.jpg`
-        }
+          var artwork = `${os.homedir()}/Documents/MusicRpcPhotos/cover.jpg`;
+        };
         
-        console.log(artwork)
+       
 
           
         const delta = (properties.duration - properties.playerPosition) * 1000;
@@ -99,7 +103,7 @@ const setActivity = async () => {
             enableYoutubeButton
               ?  {
                   label: "Listen on Youtube",
-                  url: String(`https://www.youtube.com/results?search_query=${nameandartist}`),
+                  url: result[0].url,
                 }
               : {
                 label: "Listen on Apple Music",

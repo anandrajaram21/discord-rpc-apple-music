@@ -24,6 +24,10 @@
     "applescript": "^1.0.0",
     "axios": "^0.26.0",
     "discord-rpc": "^4.0.1",
-    "node-osascript": "^2.1.0"
+    "node-osascript": "^2.1.0",
+    "youtube-search-api": "^1.1.1",
+    "youtube-search-without-api-key": "^1.1.0",
+    "yt-search": "^2.10.3",
+    "ytsr": "^3.8.0"
   }
 }
