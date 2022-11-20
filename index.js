@@ -1,19 +1,33 @@
 import RPC from "discord-rpc";
 import jxa from "@jxa/run";
 import fs from 'fs';
+import axios from "axios";
 import os from 'os';
 import osascript from "node-osascript";
 import albumArt from "album-art";
+import { encode } from "punycode";
+import { stringify } from "querystring";
 const config = JSON.parse(fs.readFileSync('./config/config.json', 'utf-8'))
 
 const fetchAlbumArt = config.fetchAlbumArtOnline;
-const enableButtonCheck = config.enableButton;
-if (enableButtonCheck === "true"){
-  var enableButton = 'true'
+const whereToFetchOnline = config.whereToFetchOnline;
+const enableArtworkSaving = config.enableArtworkSaving;
+if (config.changeButtonProvider === "youtube"){
+  var enableYoutubeButton = Boolean(true)
 }
 
 const CLIENT_ID = "1043683037105360947";
 const client = new RPC.Client({ transport: "ipc" });
+
+const fetchArtworkApple = async (searchQuery) => {
+  const params = {
+    media: "music",
+    term: searchQuery,
+  };
+  return axios.get("https://itunes.apple.com/search", {
+    params,
+  });
+};
 
 const isOpen = async () => {
   return jxa.run(() => {
@@ -42,27 +56,37 @@ const setActivity = async () => {
             playerPosition: music.playerPosition(),
           };
         });
-        console.log(properties.albumArt);
-        const nameandartist = encodeURI(`${properties.artist} ${properties.name}`)
+        const nameandartist = encodeURIComponent(`${properties.artist} ${properties.name}`)
         const options = {
-          album: encodeURI(`${properties.album}`)
+          album: encodeURIComponent(`${properties.album.replace("(", "%20").replace(")", "%20")}`)
         }
         if (fetchAlbumArt === 'true' ){
-           var artwork = await albumArt(`${properties.arist}`, options).then((data) => data);
+          if (whereToFetchOnline === 'spotify'){
+            var artwork = await albumArt(`${encodeURIComponent(properties.arist)}`, options).then((data) => data);
+          } else {
+            var appleresponse = await fetchArtworkApple(
+              `${properties.name} ${properties.artist}`
+            );
+            var artwork = appleresponse.data.results[0].artworkUrl100
+          }
         } else if (fetchAlbumArt === 'false') {
-          osascript.executeFile('./getartwork.applescript',function(err,result,raw){
+          osascript.executeFile('./applescript/getartwork.applescript',function(err,result,raw){
             if(err) return console.error(err)
             });
           var artwork = `${os.homedir()}/Documents/MusicRpcPhotos/cover.jpg`
         }
         
-        var artwork = String(artwork);
-        console.log(artwork);
-        
+        console.log(artwork)
+
           
         const delta = (properties.duration - properties.playerPosition) * 1000;
         const end = Math.ceil(Date.now() + delta);
         console.log(`${properties.artist} - ${properties.album}`)
+        if (enableArtworkSaving === 'true'){
+          osascript.executeFile('./applescript/saveartwork.applescript',{artistname:`${encodeURIComponent(properties.artist.replace("(", "%20").replace(")", "%20"))}`, songname:`${encodeURIComponent(properties.name.replace("(", "%20").replace(")", "%20"))}`},function(err,result,raw){
+            if(err) return console.error(err)
+            });
+        }
         const activity = {
           details: properties.name,
           state: `${properties.artist} — ${properties.album}`,
@@ -71,14 +95,17 @@ const setActivity = async () => {
             ? artwork
             : "https://i.pinimg.com/originals/67/f6/cb/67f6cb14f862297e3c145014cdd6b635.jpg",
           largeImageText: properties.name,
-          if (enableButton){
-            buttons: [
-                {
+          buttons: [
+            enableYoutubeButton
+              ?  {
                   label: "Listen on Youtube",
                   url: String(`https://www.youtube.com/results?search_query=${nameandartist}`),
                 }
-            ],
-          }, 
+              : {
+                label: "Listen on Apple Music",
+                url: appleresponse.data.results[0].trackViewUrl,
+            },
+          ], 
         };
 
         client.setActivity(activity);

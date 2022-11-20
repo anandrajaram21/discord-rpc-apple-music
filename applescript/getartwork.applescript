@@ -1,12 +1,7 @@
 -- get the raw bytes of the artwork into a var
 tell application "Music" to tell artwork 1 of current track
 	set srcBytes to raw data
-	-- figure out the proper file extension
-	if format is «class PNG » then
-		set ext to ".png"
-	else
-		set ext to ".jpg"
-	end if
+	set ext to ".jpg"
 end tell
 
 do shell script "mkdir -p $HOME/Documents/MusicRpcPhotos"
