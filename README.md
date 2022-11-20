@@ -12,7 +12,7 @@ In the repo mentioned before, I faced many issues with the album artwork not bei
 
 ## Some Problems
 
-Getting the artwork is the biggest problem, everything else is relatively straightforward. There is no way to get the URL of the current song playing (atleast from my research) through AppleScript (or JXA, Javascript for Automation, which is Apple's AppleScript implementation but in Javascript)
+There is no way to get the URL of the current song playing (atleast from my research) through AppleScript (or JXA, Javascript for Automation, which is Apple's AppleScript implementation but in Javascript)
 
 ## Why Didn't I Just Fork The Original Repo?
 
@@ -22,6 +22,17 @@ In the end, my code ended up being a Javascript and Node.js version of NextFire'
 
 I also removed the entire caching mechanism as it didn't seem to work well for me, and the wrong artwork would often showup on Discord.
 
+## Features
+
+From [anadrajarms21's](https://github.com/anandrajaram21/discord-rpc-apple-music) version, I have added a few things,
+No 1: Ability to save the songs artwork to the mac
+No 2: Ability to switch between getting the artwork from spotify or apple
+No 2: Ability to switch the button from apple to youtube
+No 3: A config file in the "config" directory
+No 4: Uses my own client-id, from saving Anand's id from ratelimiting
+No 5: This is still not working fully, but this will use the artwork from the file and use that as the image, for this to work I'm going to have to setup a server.
+
+
 ## Installation
 
 Prerequisites: Node.js, and NPM.
@@ -29,8 +40,8 @@ Prerequisites: Node.js, and NPM.
 To run the script, enter the following commands in a terminal window
 
 ```bash
-npm install -g pm2 # Using pm2 so its easy to manage the script
-git clone https://github.com/anandrajaram21/discord-rpc-apple-music.git
+npm install -g pm2 # Not necessary, but allows you to use with terminal shut.
+git clone https://github.com/GreenDiscord/discord-rpc-apple-music.git
 cd discord-rpc-apple-music
 npm install
 pm2 start index.js # If pm2 is not found, make sure that the globally installed npm packages are in your PATH
@@ -51,6 +62,7 @@ Removing the service from pm2 - `pm2 delete index`
 - Remove the RPC service from pm2 - `pm2 delete index`
 - Stop pm2 from running on startup with the command `pm2 unstartup`
 - Remove the directory where you cloned the GitHub repo.
+- Remove the directory in Documents, where images are saved.
 
 ## Credits
 
