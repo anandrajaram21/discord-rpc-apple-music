@@ -1,8 +1,14 @@
 import RPC from "discord-rpc";
 import jxa from "@jxa/run";
-import albumArt from "album-art"
+import fs from 'fs';
+import os from 'os';
+import osascript from "node-osascript";
+import albumArt from "album-art";
+const config = JSON.parse(fs.readFileSync('./config/config.json', 'utf-8'))
 
-const CLIENT_ID = "947831155376422923";
+const fetchAlbumArt = config.fetchAlbumArtOnline;
+
+const CLIENT_ID = "1043683037105360947";
 const client = new RPC.Client({ transport: "ipc" });
 
 const isOpen = async () => {
@@ -32,10 +38,24 @@ const setActivity = async () => {
             playerPosition: music.playerPosition(),
           };
         });
+        console.log(properties.albumArt);
+        const nameandartist = encodeURI(`${properties.artist} ${properties.name}`)
         const options = {
           album: encodeURI(`${properties.album}`)
         }
-        const artwork = await albumArt(`${properties.arist}`, options).then((data) => data);
+        if (fetchAlbumArt === 'true' ){
+           var artwork = await albumArt(`${properties.arist}`, options).then((data) => data);
+        } else if (fetchAlbumArt === 'false') {
+          osascript.executeFile('./getartwork.applescript',function(err,result,raw){
+            if(err) return console.error(err)
+            });
+          var artwork = `${os.homedir()}/Documents/MusicRpcPhotos/cover.jpg`
+        }
+        
+        var artwork = String(artwork);
+        console.log(artwork);
+        
+          
         const delta = (properties.duration - properties.playerPosition) * 1000;
         const end = Math.ceil(Date.now() + delta);
         console.log(`${properties.artist} - ${properties.album}`)
@@ -47,6 +67,14 @@ const setActivity = async () => {
             ? artwork
             : "https://i.pinimg.com/originals/67/f6/cb/67f6cb14f862297e3c145014cdd6b635.jpg",
           largeImageText: properties.name,
+          buttons: [
+            artwork
+              ? {
+                  label: "Listen on Youtube",
+                  url: String(`https://www.youtube.com/results?search_query=${nameandartist}`),
+                }
+             : {}, 
+          ],
         };
 
         client.setActivity(activity);

@@ -1,0 +1,7 @@
+{
+    "If true, it will ignore the files artwork and fetch online": "comment1",
+    "fetchAlbumArtOnline": "true",
+    "Will enable or disable the 'Listen on Apple Music button'": "comment2",
+    "enableButton": "false"
+}
+
