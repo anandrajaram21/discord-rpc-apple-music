@@ -7,6 +7,10 @@ import albumArt from "album-art";
 const config = JSON.parse(fs.readFileSync('./config/config.json', 'utf-8'))
 
 const fetchAlbumArt = config.fetchAlbumArtOnline;
+const enableButtonCheck = config.enableButton;
+if (enableButtonCheck === "true"){
+  var enableButton = 'true'
+}
 
 const CLIENT_ID = "1043683037105360947";
 const client = new RPC.Client({ transport: "ipc" });
@@ -67,14 +71,14 @@ const setActivity = async () => {
             ? artwork
             : "https://i.pinimg.com/originals/67/f6/cb/67f6cb14f862297e3c145014cdd6b635.jpg",
           largeImageText: properties.name,
-          buttons: [
-            artwork
-              ? {
+          if (enableButton){
+            buttons: [
+                {
                   label: "Listen on Youtube",
                   url: String(`https://www.youtube.com/results?search_query=${nameandartist}`),
                 }
-             : {}, 
-          ],
+            ],
+          }, 
         };
 
         client.setActivity(activity);
