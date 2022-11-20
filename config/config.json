@@ -1,0 +1,11 @@
+{
+    "If true, it will ignore the files artwork and fetch online (this feature isn't fully working yet, keep it default)": "comment1",
+    "fetchAlbumArtOnline": "true",
+    "Fetch Album art from spotify or apple": "comment2",
+    "whereToFetchOnline": "apple",
+    "Will change from either youtube or apple music button": "comment3",
+    "changeButtonProvider": "youtube",
+    "Will enable saving the songs artwork to the 'MusicRpcPhotos' Folder.": "comment4",
+    "enableArtworkSaving": "true"
+}
+
